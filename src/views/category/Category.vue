@@ -116,11 +116,23 @@
     },
     mounted() {
       this.scroll = new BScroll(document.querySelector('.wrapper'), {
+        probeType: 3,
+        pullUpLoad: true
+      })
+
+      this.scroll.on('scroll', position => {
+        // console.log(position);
+      })
+
+      this.scroll.on('pullingUp', () => {
+        console.log(111);
+
+        this.scroll.finishPullUp()
       })
     },
   }
 </script>
-<style lang="css">
+<style lang="css" scoped>
   .wrapper {
     height: 350px;
     background-color: aquamarine;
