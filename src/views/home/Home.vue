@@ -1,13 +1,14 @@
 <template lang="">
   <div id="home">
     <nav-bar class="home-nav"><template v-slot:center>购物街</template></nav-bar>
-    <scroll class="content">
+    <scroll class="content" ref="scroll" :probe-type='3' :pull-up-load='true' @scroll='contentScroll' @pullingUp='loadMore'>
       <home-swiper :banners='banners'/>
       <recommend-view :recommends='recommends'/>
       <feature-view/>
       <tab-control class="tab-control" :titles='["流行", "新款", "精选"]' @tabClick='tabClick'/>
       <goods-list :goods='showGoods'/>
     </scroll>
+    <back-top @click.native='backClick' v-show='isShowBackTop'/>
   </div>
 </template>
 <script>
@@ -15,6 +16,7 @@
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
   import Scroll from 'components/common/scroll/Scroll'
+  import BackTop from 'components/content/backTop/BackTop'
 
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
@@ -29,6 +31,7 @@
       TabControl,
       GoodsList,
       Scroll,
+      BackTop,
       HomeSwiper,
       RecommendView,
       FeatureView
@@ -42,7 +45,8 @@
           'new': {page: 0, list: []},
           'sell': {page: 0, list: []},
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        isShowBackTop: false
       }
     },
     computed: {
@@ -73,6 +77,16 @@
             this.currentType = 'sell'
             break
         }
+      },
+      backClick() {
+        this.$refs.scroll.scrollTo(0, 0)
+      },
+      contentScroll(position) {
+        this.isShowBackTop = (-position.y) > 500
+      },
+      loadMore() {
+        this.getHomeGoods(this.currentType)
+        this.$refs.scroll.scroll.refresh()
       },
 
       // 网络请求相关的方法
@@ -1999,17 +2013,25 @@
           }
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page += 1
+          this.$refs.scroll.finishPullUp()
         })
       }
     },
   }
 </script>
 <style scoped>
+  /* 对应下面的方法一 */
   #home {
     padding-top: 44px;
     height: 100vh;
     position: relative;
   }
+
+  /* 对应下面的方法二 */
+  /* #home {
+    height: 100vh;
+    position: relative;
+  } */
   
   .home-nav {
     background-color: var(--color-tint);
@@ -2026,7 +2048,8 @@
     top: 44px;
     z-index: 9;
   }
-
+  /* 这里对中间区域滑动高度的处理有两种 */
+  /* 方法一 */
   .content {
     /* height: 500px; */
     overflow: hidden;
@@ -2036,4 +2059,11 @@
     left: 0;
     right: 0;
   }
+
+  /* 方法二 */
+  /* .content {
+    height: calc(100% - 93px);
+    overflow: hidden;
+    margin-top: 44px;
+  } */
 </style>
