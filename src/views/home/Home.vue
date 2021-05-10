@@ -67,7 +67,8 @@
     mounted() {
       // 3.监听GoodsListItem中的图片是否加载完成，如果加载完成，则调用better-scroll中的refresh更新滚动的高度
       this.$bus.on('itemImageLoad', () => {
-        this.$refs.scroll.refresh()
+        // 加this.$refs.scroll && 的目的是防止scroll组件还没挂载完，就已经执行this.$refs.scroll.refresh()了，这样会报错
+        this.$refs.scroll && this.$refs.scroll.refresh()  // 意思是如果this.$refs.scroll不是null或者undefined，才执行 && 后面的代码
       })
     },
     methods: {

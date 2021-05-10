@@ -38,11 +38,10 @@
     },
     methods: {
       scrollTo(x, y, time=500) {
-        this.scroll.scrollTo(x, y, time)
+        this.scroll && this.scroll.scrollTo(x, y, time)
       },
       refresh() {
-        // 加this.scroll && 的目的是防止scroll组件还没挂载完，就已经执行this.scroll.refresh()了，这样会报错
-        this.scroll && this.scroll.refresh()  // 意思是如果this.scroll不是null或者undefined，才执行 && 后面的代码
+        this.scroll && this.scroll.refresh()
       }
     },
   }
