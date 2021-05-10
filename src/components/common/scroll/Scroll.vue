@@ -14,10 +14,6 @@
       probeType: {
         type: Number,
         default: 0
-      },
-      pullUpLoad: {
-        type: Boolean,
-        default: false
       }
     },
     data() {
@@ -38,17 +34,15 @@
         this.$emit('scroll', position)
       })
 
-      // 3. 监听上拉事件
-      this.scroll.on('pullingUp', () => {
-        this.$emit('pullingUp')
-      })
+      // console.log(this.scroll);
     },
     methods: {
       scrollTo(x, y, time=500) {
         this.scroll.scrollTo(x, y, time)
       },
-      finishPullUp() {
-        this.scroll.finishPullUp()
+      refresh() {
+        // 加this.scroll && 的目的是防止scroll组件还没挂载完，就已经执行this.scroll.refresh()了，这样会报错
+        this.scroll && this.scroll.refresh()  // 意思是如果this.scroll不是null或者undefined，才执行 && 后面的代码
       }
     },
   }

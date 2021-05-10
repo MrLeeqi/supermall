@@ -1,7 +1,7 @@
 <template lang="">
   <div id="home">
     <nav-bar class="home-nav"><template v-slot:center>购物街</template></nav-bar>
-    <scroll class="content" ref="scroll" :probe-type='3' :pull-up-load='true' @scroll='contentScroll' @pullingUp='loadMore'>
+    <scroll class="content" ref="scroll" :probe-type='3' :pull-up-load='true' @scroll='contentScroll'>
       <home-swiper :banners='banners'/>
       <recommend-view :recommends='recommends'/>
       <feature-view/>
@@ -62,6 +62,13 @@
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
+
+    },
+    mounted() {
+      // 3.监听GoodsListItem中的图片是否加载完成，如果加载完成，则调用better-scroll中的refresh更新滚动的高度
+      this.$bus.on('itemImageLoad', () => {
+        this.$refs.scroll.refresh()
+      })
     },
     methods: {
       // 事件监听相关的方法
@@ -83,10 +90,6 @@
       },
       contentScroll(position) {
         this.isShowBackTop = (-position.y) > 500
-      },
-      loadMore() {
-        this.getHomeGoods(this.currentType)
-        this.$refs.scroll.scroll.refresh()
       },
 
       // 网络请求相关的方法
@@ -2013,7 +2016,6 @@
           }
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page += 1
-          this.$refs.scroll.finishPullUp()
         })
       }
     },
