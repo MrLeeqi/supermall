@@ -66,13 +66,28 @@
     },
     mounted() {
       // 3.监听GoodsListItem中的图片是否加载完成，如果加载完成，则调用better-scroll中的refresh更新滚动的高度
+      // this.$bus.on('itemImageLoad', () => {
+      //   // 加this.$refs.scroll && 的目的是防止scroll组件还没挂载完，就已经执行this.$refs.scroll.refresh()了，这样会报错
+      //   this.$refs.scroll && this.$refs.scroll.refresh()  // 意思是如果this.$refs.scroll不是null或者undefined，才执行 && 后面的代码
+      // })
+      // 上面的refresh执行得太频繁了，使用防抖函数提升性能
+      const refresh = this.debounce(this.$refs.scroll.refresh, 50)
       this.$bus.on('itemImageLoad', () => {
-        // 加this.$refs.scroll && 的目的是防止scroll组件还没挂载完，就已经执行this.$refs.scroll.refresh()了，这样会报错
-        this.$refs.scroll && this.$refs.scroll.refresh()  // 意思是如果this.$refs.scroll不是null或者undefined，才执行 && 后面的代码
+        refresh()
       })
     },
     methods: {
       // 事件监听相关的方法
+      debounce(func, delay) {
+        // 防抖函数
+        let timer = null
+        return function(...args) {
+          if (timer) clearTimeout(timer)
+          timer = setTimeout(() => {
+            func.apply(this, args)
+          }, delay)
+        }
+      },
       tabClick(index) {
         switch (index) {
           case 0:
