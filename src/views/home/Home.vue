@@ -1,12 +1,12 @@
 <template lang="">
   <div id="home">
     <nav-bar class="home-nav"><template v-slot:center>购物街</template></nav-bar>
-      <tab-control :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl" class="tab-control-2" v-show='isTabFixed'/>
+      <tab-control :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl1" class="tab-control-2" v-show='isTabFixed'/>
     <scroll class="content" ref="scroll" :probe-type='3' @scroll='contentScroll' :pull-up-load='true' @pullingUp='loadMore'>
       <home-swiper :banners='banners' @swiperImageLoad='swiperImageLoad'/>
       <recommend-view :recommends='recommends'/>
       <feature-view/>
-      <tab-control class="tab-control" :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl"/>
+      <tab-control class="tab-control" :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl2"/>
       <!-- <tab-control class="tab-control" :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl" :class='{fixed: isTabFixed}'/> -->
       <goods-list :goods='showGoods'/>
     </scroll>
@@ -80,9 +80,6 @@
       this.$bus.on('itemImageLoad', () => {
         refresh()
       })
-
-      // 获取tabControl的offsetTop
-      this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
     },
     methods: {
       // 事件监听相关的方法
@@ -112,7 +109,8 @@
         this.getHomeGoods(this.currentType)
       },
       swiperImageLoad() {
-        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop;
+        // 等swiper图片加载完后，获取tabControl的offsetTop才是正确的值
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
       },
 
       // 网络请求相关的方法
