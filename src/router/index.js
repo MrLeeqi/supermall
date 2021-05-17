@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
 
 const Home = () => import ('views/home/Home')
+const Detail = () => import ('views/detail/Detail')
 const Cart = () => import ('views/cart/Cart')
 const Category = () => import ('views/category/Category')
 const Profile = () => import ('views/profile/Profile')
@@ -17,6 +18,13 @@ const routes = [
     component: Home,
     meta: {
       title: '首页'
+    }
+  },
+  {
+    path: '/detail/:iid',
+    component: Detail,
+    meta: {
+      title: '详情页面'
     }
   },
   {

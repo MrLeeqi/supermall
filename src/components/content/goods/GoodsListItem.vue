@@ -1,10 +1,10 @@
 <template lang="">
-  <div class="goods-item">
+  <div class="goods-item" @click='itemClick'>
     <img :src="goodsItem.img" alt="" @load='imgLoad'>
     <div class="goods-info">
-      <p>{{goodsItem.t}}</p>
-      <span class="price">{{goodsItem.jp/100}}</span>
-      <span class="collect">{{goodsItem.c3}}</span>
+      <p>{{goodsItem.title}}</p>
+      <span class="price">{{goodsItem.price}}</span>
+      <span class="collect">{{goodsItem.cfav}}</span>
     </div>
   </div>
 </template>
@@ -22,6 +22,9 @@ export default {
   methods: {
     imgLoad() {
       this.$bus.emit('itemImageLoad')
+    },
+    itemClick() {
+      this.$router.push('/detail/' + this.goodsItem.tradeItemId)
     }
   },
 }
