@@ -12,7 +12,7 @@
       <span>{{goods.columns[1].desc}}</span>
     </div>
     <div class="info-service">
-      <span class="info-service-item" v-for="index in goods.services.length-1" :key="index">
+      <span class="info-service-item" v-for="index in goods.services.length-2" :key="index">
         <img :src="goods.services[index-1].icon">
         <span>{{goods.services[index-1].name}}</span>
       </span>
@@ -87,7 +87,7 @@
   .info-service {
     display: flex;
     justify-content: space-between;
-    line-height: 60px;
+    line-height: 40px;
   }
 
   .info-service-item img {
