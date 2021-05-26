@@ -8,7 +8,7 @@
       <div class="shop-middle-item shop-middle-left">
         <div class="info-sells">
           <div class="sells-count">
-            <!-- {{shop.sells | sellCountFilter}} -->
+            <!-- {{sellCountFilter}} -->
             {{shop.sells}}
           </div>
           <div class="sells-text">总销量</div>
@@ -47,10 +47,11 @@
         }
       }
     },
-    filters: {
-      sellCountFilter: function (value) {
-        if (value < 10000) return value;
-        return (value/10000).toFixed(1) + '万'
+    computed: {
+      // 使用计算属性来代替filters过滤器
+      sellCountFilter() {
+        if (this.shop.sells < 10000) return this.shop.sells;
+        return (this.shop.sells/10000).toFixed(1) + '万'
       }
     }
 	}
