@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 500px;
+      height: 500px;
+      background-color: orange;
+      margin: 0 auto;
+      /* 开启flex布局: */
+      display: flex;
+      /* align-items: center; */
+    }
+
+    .item {
+      width: 100px;
+      height: 100px;
+      color: #fff;
+      text-align: center;
+      /* line-height: 100px; */
+
+      /* flex-grow,flex-shrink,flex-basis的缩写 */
+      /* flex: 1 200px; */
+    }
+
+    .item1 {
+      background-color: #f00;
+      /* order: 66; */
+
+      /* 剩下的200px中，占五(2+2+1)份中的两份(200/5*2=80px) */
+      /* flex-grow: 2; */
+
+      /* 剩下的200px中，200*0.2=40px */
+      /* flex-grow: .2; */
+
+      /* 跟flex-grow相反，将超出父元素的值按照比例进行收缩 */
+      /* flex-shrink: 2; */
+
+      /* 设置item的基本宽度，优先级比width高 */
+      /* flex-basis: 200px; */
+      /* width: 300px; */
+    }
+
+    .item2 {
+      background-color: #0f0;
+      /* order: 33; */
+      /* height: 150px;*/
+      /* flex-grow: 2; */
+      /* flex-grow: .2; */
+      /* flex-shrink: 2; */
+    }
+
+    .item3 {
+      background-color: #00f;
+      /* order: 2; */
+      /* align-self: flex-end; */
+      /* flex-grow: 1; */
+      /* flex-grow: .1; */
+      /* flex-shrink: 1; */
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="item item1">item1</div>
+    <div class="item item2">item2</div>
+    <div class="item item3">item3</div>
+  </div>
+  <strong>strong元素</strong>
+</body>
+</html>

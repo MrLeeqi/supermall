@@ -31,6 +31,7 @@
 		Shop,
 		GoodsParam
 	} from 'network/detail'
+  import {itemListenerMixin} from 'common/mixin'
 
 	export default {
 		name: 'Detail',
@@ -45,6 +46,7 @@
 			Scroll,
 			GoodsList
 		},
+		mixins: [itemListenerMixin],
 		data() {
 			return {
 				iid: null,
@@ -102,6 +104,18 @@
 			getRecommend().then(res => {
 				this.recommends = res
 			})
+		},
+		// mounted() {
+    //   const refresh = debounce(this.$refs.scroll.refresh, 50)
+    //   // 对监听的事件进行保存
+    //   this.itemImageListener = () => {
+    //     refresh()
+    //   }
+    //   this.$bus.on('itemImageLoad', this.itemImageListener)
+		// },
+		unmounted() {
+      // 取消全局事件的监听
+      this.$bus.off('itemImageLoad', this.itemImageListener)
 		},
 		methods: {
 			imgLoad() {

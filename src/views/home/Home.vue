@@ -25,7 +25,7 @@
   import FeatureView from './childComps/FeatureView'
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
-  import {debounce} from 'common/utils'
+  import {itemListenerMixin} from 'common/mixin'
 
   export default {
     name: 'Home',
@@ -39,6 +39,7 @@
       RecommendView,
       FeatureView
     },
+		mixins: [itemListenerMixin],
     data() {
       return {
         banners: [],
@@ -68,7 +69,11 @@
       this.$refs.scroll.refresh()
     },
     deactivated() {
+      // 保存跳转时的Y值，作用是下次跳转回来时还在离开时的位置
       this.saveY = this.$refs.scroll.getScrollY()
+
+      // 取消全局事件的监听
+      this.$bus.off('itemImageLoad', this.itemImageListener)
     },
     created() {
       // 1.请求多个数据
@@ -80,18 +85,20 @@
       this.getHomeGoods('sell')
 
     },
-    mounted() {
-      // 3.监听GoodsListItem中的图片是否加载完成，如果加载完成，则调用better-scroll中的refresh更新滚动的高度
-      // this.$bus.on('itemImageLoad', () => {
-      //   // 加this.$refs.scroll && 的目的是防止scroll组件还没挂载完，就已经执行this.$refs.scroll.refresh()了，这样会报错
-      //   this.$refs.scroll && this.$refs.scroll.refresh()  // 意思是如果this.$refs.scroll不是null或者undefined，才执行 && 后面的代码
-      // })
-      // 上面的refresh执行得太频繁了，使用防抖函数提升性能
-      const refresh = debounce(this.$refs.scroll.refresh, 50)
-      this.$bus.on('itemImageLoad', () => {
-        refresh()
-      })
-    },
+    // mounted() {
+    //   // 3.监听GoodsListItem中的图片是否加载完成，如果加载完成，则调用better-scroll中的refresh更新滚动的高度
+    //   // this.$bus.on('itemImageLoad', () => {
+    //   //   // 加this.$refs.scroll && 的目的是防止scroll组件还没挂载完，就已经执行this.$refs.scroll.refresh()了，这样会报错
+    //   //   this.$refs.scroll && this.$refs.scroll.refresh()  // 意思是如果this.$refs.scroll不是null或者undefined，才执行 && 后面的代码
+    //   // })
+    //   // 上面的refresh执行得太频繁了，使用防抖函数提升性能
+    //   const refresh = debounce(this.$refs.scroll.refresh, 50)
+    //   // 对监听的事件进行保存
+    //   this.itemImageListener = () => {
+    //     refresh()
+    //   }
+    //   this.$bus.on('itemImageLoad', this.itemImageListener)
+    // },
     methods: {
       // 事件监听相关的方法
       tabClick(index) {

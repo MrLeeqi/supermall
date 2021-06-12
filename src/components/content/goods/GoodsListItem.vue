@@ -22,6 +22,14 @@ export default {
   methods: {
     imgLoad() {
       this.$bus.emit('itemImageLoad')
+      // 处理首页和详情页中同时使用该事件刷新scroll的高度问题，如果没有这段代码，
+      // 则当我们跳转到详情页时加载GoodsListItem，给首页也发出了这个事件，这个是没必要的，所以要有这段代码
+      // if (this.$route.path.indexOf('/home')) {
+      //   this.$bus.emit('homeItemImageLoad')
+      // }
+      // else if (this.$route.path.indexOf('/detail')) {
+      //   this.$bus.emit('detailItemImageLoad')
+      // }
     },
     itemClick() {
       this.$router.push('/detail/' + this.goodsItem.tradeItemId)
