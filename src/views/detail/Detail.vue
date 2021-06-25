@@ -1,14 +1,14 @@
 <template lang="">
 	<div id="detail">
-		<detail-nav-bar class="detail-nav" />
+		<detail-nav-bar class="detail-nav" @titleClick='titleClick' />
 		<scroll class="content" ref="scroll">
 			<detail-swiper :top-images='topImages'></detail-swiper>
 			<detail-base-info :goods='goods'></detail-base-info>
 			<detail-shop-info :shop='shop'></detail-shop-info>
 			<detail-goods-info :detail-info='detailInfo' @imgLoad="imgLoad"></detail-goods-info>
-			<detail-param-info :param-info='paramInfo'></detail-param-info>
-			<detail-comment-info :comment-info='commentInfo' />
-			<goods-list :goods='recommends'></goods-list>
+			<detail-param-info ref="params" :param-info='paramInfo'></detail-param-info>
+			<detail-comment-info ref="comment" :comment-info='commentInfo' />
+			<goods-list ref="recommend" :goods='recommends'></goods-list>
 		</scroll>
 	</div>
 </template>
@@ -32,6 +32,7 @@
 		GoodsParam
 	} from 'network/detail'
   import {itemListenerMixin} from 'common/mixin'
+  import {debounce} from 'common/utils'
 
 	export default {
 		name: 'Detail',
@@ -56,7 +57,9 @@
 				detailInfo: {},
 				paramInfo: {},
 				commentInfo: {},
-				recommends: []
+				recommends: [],
+				detailScrollYs: [],
+				getDetailScrollYs: null
 			}
 		},
 		created() {
@@ -98,12 +101,42 @@
 				if (data.rateInfo.cRate !== 0) {
 					this.commentInfo = data.rateInfo.list
 				}
+
+				// 第一次在此获取时，值是不对的
+				// 因为 this.$refs.params.$el 压根没有渲染
+				// this.detailScrollYs.push(0)
+				// this.detailScrollYs.push(this.$refs.params.$el.offsetTop)
+				// this.detailScrollYs.push(this.$refs.comment.$el.offsetTop)
+				// this.detailScrollYs.push(this.$refs.recommend.$el.offsetTop)
+				// console.log(this.detailScrollYs);
+
+				// 第二次获取
+				// 要想拿到【商品、参数、评论、推荐】渲染完之后的高度，必须等到所有视图加载完毕才能获取
+				// 但是，图片依然是没有加载完，获取到的offsetTop不包含其中的图片
+				// 等到整个视图渲染完毕后，就会回调一下这个函数（不包含图片在内哦）
+				// 官方解说：https://cn.vuejs.org/v2/api/#updated
+				// this.$nextTick(() => {
+				// 	this.detailScrollYs.push(0)
+				// 	this.detailScrollYs.push(this.$refs.params.$el.offsetTop)
+				// 	this.detailScrollYs.push(this.$refs.comment.$el.offsetTop)
+				// 	this.detailScrollYs.push(this.$refs.recommend.$el.offsetTop)
+				// 	console.log(this.detailScrollYs);
+				// })
 			})
 			
 			// 3.获取详情页商品推荐数据
 			getRecommend().then(res => {
 				this.recommends = res
 			})
+
+			// 4.给getDetailScrollYs赋值，使其不要频繁的调用，达到防抖的效果
+			this.getDetailScrollYs = debounce(() => {
+				this.detailScrollYs.push(0)
+				this.detailScrollYs.push(this.$refs.params.$el.offsetTop)
+				this.detailScrollYs.push(this.$refs.comment.$el.offsetTop)
+				this.detailScrollYs.push(this.$refs.recommend.$el.offsetTop)
+				console.log(this.detailScrollYs);
+			}, 100)
 		},
 		// mounted() {
     //   const refresh = debounce(this.$refs.scroll.refresh, 50)
@@ -119,7 +152,15 @@
 		},
 		methods: {
 			imgLoad() {
-				this.$refs.scroll.refresh()
+				// this.$refs.scroll.refresh()
+				// 这是混入(mixin.js)里面的refresh
+				this.refresh()
+
+				this.getDetailScrollYs()
+				console.log('---------');
+			},
+			titleClick(index) {
+				this.$refs.scroll.scrollTo(0, -this.detailScrollYs[index], 200)
 			}
 		},
 	}
