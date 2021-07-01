@@ -1,7 +1,7 @@
 <template lang="">
   <div id="home">
     <nav-bar class="home-nav"><template v-slot:center>购物街</template></nav-bar>
-      <tab-control :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl1" class="tab-control-2" v-show='isTabFixed'/>
+    <tab-control :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl1" class="tab-control-2" v-show='isTabFixed'/>
     <scroll class="content" ref="scroll" :probe-type='3' @scroll='contentScroll' :pull-up-load='true' @pullingUp='loadMore'>
       <home-swiper :banners='banners' @swiperImageLoad='swiperImageLoad'/>
       <recommend-view :recommends='recommends'/>

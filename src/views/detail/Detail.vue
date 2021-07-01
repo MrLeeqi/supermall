@@ -1,7 +1,7 @@
 <template lang="">
 	<div id="detail">
-		<detail-nav-bar class="detail-nav" @titleClick='titleClick' />
-		<scroll class="content" ref="scroll">
+		<detail-nav-bar ref="detailNav" class="detail-nav" @titleClick='titleClick' />
+		<scroll class="content" ref="scroll" :probe-type='3' @scroll='contentScroll'>
 			<detail-swiper :top-images='topImages'></detail-swiper>
 			<detail-base-info :goods='goods'></detail-base-info>
 			<detail-shop-info :shop='shop'></detail-shop-info>
@@ -59,7 +59,8 @@
 				commentInfo: {},
 				recommends: [],
 				detailScrollYs: [],
-				getDetailScrollYs: null
+				getDetailScrollYs: null,
+				currentIndex: 0
 			}
 		},
 		created() {
@@ -135,6 +136,8 @@
 				this.detailScrollYs.push(this.$refs.params.$el.offsetTop)
 				this.detailScrollYs.push(this.$refs.comment.$el.offsetTop)
 				this.detailScrollYs.push(this.$refs.recommend.$el.offsetTop)
+				// 在detailScrollYs数组里面增加一个虚拟的最大值，使其当index=3时，可以用来判断在两者之间index就等于3，【对应下面的方法二】
+				this.detailScrollYs.push(Number.MAX_VALUE)
 				console.log(this.detailScrollYs);
 			}, 100)
 		},
@@ -161,6 +164,33 @@
 			},
 			titleClick(index) {
 				this.$refs.scroll.scrollTo(0, -this.detailScrollYs[index], 200)
+			},
+			contentScroll(position) {
+				// 1. 获取Y值
+				const positionY = -position.y
+				// 2. Y值和detailScrollYs对比
+				// [0, 11834, 12469, 12759]
+				// positionY在0~11834之间，index=0
+				// positionY在11834~12469之间，index=1
+				// positionY在12469~12759之间，index=2
+				// positionY超过12759，index=3
+				let length = this.detailScrollYs.length
+				// 方法一
+				// this.currentIndex !== i的作用是：防止频繁的赋值
+				// for(let i = 0; i < length; i++) {
+				// 	if (this.currentIndex !== i && ((i < length - 1 && positionY >= this.detailScrollYs[i] && positionY < this.detailScrollYs[i+1]) || (i ===length - 1 && positionY >= this.detailScrollYs[i]))) {
+				// 		this.currentIndex = i
+				// 		this.$refs.detailNav.currentIndex = i
+				// 	}
+				// }
+
+				// 方法二：在detailScrollYs数组的最后添加一个非常大的值，这样就可以判断在最后一个数和这个最大的值之间时，index=3
+				for(let i = 0; i < length - 1; i++) {
+					if (this.currentIndex !== i && (positionY >= this.detailScrollYs[i] && positionY < this.detailScrollYs[i + 1])) {
+						this.currentIndex = i
+						this.$refs.detailNav.currentIndex = i
+					}
+				}
 			}
 		},
 	}
