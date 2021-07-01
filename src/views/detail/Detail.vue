@@ -10,6 +10,8 @@
 			<detail-comment-info ref="comment" :comment-info='commentInfo' />
 			<goods-list ref="recommend" :goods='recommends'></goods-list>
 		</scroll>
+		<detail-bottom-bar></detail-bottom-bar>
+    <back-top @click.native='backTop' v-show='isShowBackTop'/>
 	</div>
 </template>
 <script>
@@ -20,6 +22,7 @@
 	import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 	import DetailParamInfo from './childComps/DetailParamInfo'
 	import DetailCommentInfo from './childComps/DetailCommentInfo'
+	import DetailBottomBar from './childComps/DetailBottomBar'
 
 	import Scroll from 'components/common/scroll/Scroll'
   import GoodsList from 'components/content/goods/GoodsList'
@@ -31,7 +34,7 @@
 		Shop,
 		GoodsParam
 	} from 'network/detail'
-  import {itemListenerMixin} from 'common/mixin'
+  import {itemListenerMixin, backTopMixin} from 'common/mixin'
   import {debounce} from 'common/utils'
 
 	export default {
@@ -44,10 +47,11 @@
 			DetailGoodsInfo,
 			DetailParamInfo,
 			DetailCommentInfo,
+			DetailBottomBar,
 			Scroll,
 			GoodsList
 		},
-		mixins: [itemListenerMixin],
+		mixins: [itemListenerMixin, backTopMixin],
 		data() {
 			return {
 				iid: null,
@@ -160,7 +164,6 @@
 				this.refresh()
 
 				this.getDetailScrollYs()
-				console.log('---------');
 			},
 			titleClick(index) {
 				this.$refs.scroll.scrollTo(0, -this.detailScrollYs[index], 200)
@@ -191,6 +194,9 @@
 						this.$refs.detailNav.currentIndex = i
 					}
 				}
+
+				// 3.是否显示回到顶部图标
+				this.listenshowBackTop(position)
 			}
 		},
 	}
@@ -210,6 +216,6 @@
 	}
 
 	.content {
-		height: calc(100% - 44px);
+		height: calc(100% - 44px - 58px);
 	}
 </style>

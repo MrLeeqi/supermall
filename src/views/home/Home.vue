@@ -10,7 +10,7 @@
       <!-- <tab-control class="tab-control" :titles='["流行", "新款", "精选"]' @tabClick='tabClick' ref="tabControl" :class='{fixed: isTabFixed}'/> -->
       <goods-list :goods='showGoods'/>
     </scroll>
-    <back-top @click.native='backClick' v-show='isShowBackTop'/>
+    <back-top @click.native='backTop' v-show='isShowBackTop'/>
   </div>
 </template>
 <script>
@@ -18,14 +18,14 @@
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
   import Scroll from 'components/common/scroll/Scroll'
-  import BackTop from 'components/content/backTop/BackTop'
 
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
   import FeatureView from './childComps/FeatureView'
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
-  import {itemListenerMixin} from 'common/mixin'
+  import {itemListenerMixin, backTopMixin} from 'common/mixin'
+  import {NEW, POP, SELL} from "@/common/const";
 
   export default {
     name: 'Home',
@@ -34,12 +34,11 @@
       TabControl,
       GoodsList,
       Scroll,
-      BackTop,
       HomeSwiper,
       RecommendView,
       FeatureView
     },
-		mixins: [itemListenerMixin],
+		mixins: [itemListenerMixin, backTopMixin],
     data() {
       return {
         banners: [],
@@ -49,8 +48,7 @@
           'new': {page: 0, list: []},
           'sell': {page: 0, list: []},
         },
-        currentType: 'pop',
-        isShowBackTop: false,
+        currentType: POP,
         tabOffsetTop: 0,
         isTabFixed: false,
         saveY: 0
@@ -80,9 +78,9 @@
       this.getHomeMultidata()
 
       // 2.请求商品数据
-      this.getHomeGoods('pop')
-      this.getHomeGoods('new')
-      this.getHomeGoods('sell')
+      this.getHomeGoods(POP)
+      this.getHomeGoods(NEW)
+      this.getHomeGoods(SELL)
 
     },
     // mounted() {
@@ -104,24 +102,21 @@
       tabClick(index) {
         switch (index) {
           case 0:
-            this.currentType = 'pop'
+            this.currentType = POP
             break
           case 1:
-            this.currentType = 'new'
+            this.currentType = NEW
             break
           case 2:
-            this.currentType = 'sell'
+            this.currentType = SELL
             break
         }
         this.$refs.tabControl1.currentIndex = index
         this.$refs.tabControl2.currentIndex = index
       },
-      backClick() {
-        this.$refs.scroll.scrollTo(0, 0)
-      },
       contentScroll(position) {
         // 1. 判断backTop是否显示
-        this.isShowBackTop = (-position.y) > 500
+        this.listenshowBackTop(position)
         // 2. 决定tabControl是否吸顶
         this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
