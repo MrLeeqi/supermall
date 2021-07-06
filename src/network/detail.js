@@ -19,9 +19,11 @@ export class Goods {
   constructor(itemInfo, priceInfo, itemServices) {
     this.oldPrice = itemInfo.highPrice
     this.newPrice = itemInfo.highNowPrice
+    this.realPrice = itemInfo.lowNowPrice
     this.cFav = itemInfo.cFav
     this.priceTags = priceInfo.priceTags
     this.title = itemInfo.title
+    this.desc = itemInfo.desc
     this.columns = itemServices.columns
     this.services = itemServices.services
   }
