@@ -30,6 +30,7 @@ export default {
     payload.count++
   },
   [ADD_TO_CART](state, payload) {
+    payload.checked = true  // 给新加入的商品设置选中状态
     state.cartList.push(payload)
   }
 }

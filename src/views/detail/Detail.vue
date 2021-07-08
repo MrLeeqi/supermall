@@ -142,7 +142,7 @@
 				this.detailScrollYs.push(this.$refs.recommend.$el.offsetTop)
 				// 在detailScrollYs数组里面增加一个虚拟的最大值，使其当index=3时，可以用来判断在两者之间index就等于3，【对应下面的方法二】
 				this.detailScrollYs.push(Number.MAX_VALUE)
-				console.log(this.detailScrollYs);
+				// console.log(this.detailScrollYs);
 			}, 100)
 		},
 		// mounted() {
