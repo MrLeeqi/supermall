@@ -12,6 +12,7 @@
 		</scroll>
 		<detail-bottom-bar @addCart='addToCart'></detail-bottom-bar>
     <back-top @click.native='backTop' v-show='isShowBackTop'/>
+		<!-- <toast :message='toastMessage' :show='toastShow' /> -->
 	</div>
 </template>
 <script>
@@ -26,6 +27,7 @@
 
 	import Scroll from 'components/common/scroll/Scroll'
   import GoodsList from 'components/content/goods/GoodsList'
+	// import Toast from 'components/common/toast/Toast'
 
 	import {
 		getDetail,
@@ -36,6 +38,8 @@
 	} from 'network/detail'
   import {itemListenerMixin, backTopMixin} from 'common/mixin'
   import {debounce} from 'common/utils'
+
+	import {mapActions} from 'vuex'
 
 	export default {
 		name: 'Detail',
@@ -49,7 +53,8 @@
 			DetailCommentInfo,
 			DetailBottomBar,
 			Scroll,
-			GoodsList
+			GoodsList,
+			// Toast
 		},
 		mixins: [itemListenerMixin, backTopMixin],
 		data() {
@@ -64,7 +69,9 @@
 				recommends: [],
 				detailScrollYs: [],
 				getDetailScrollYs: null,
-				currentIndex: 0
+				currentIndex: 0,
+				// toastMessage: '',
+				// toastShow: false
 			}
 		},
 		created() {
@@ -158,6 +165,10 @@
       this.$bus.off('itemImageLoad', this.itemImageListener)
 		},
 		methods: {
+			...mapActions(['addCart']),
+			// ...mapActions({
+			// 	add: 'addCart'
+			// }),
 			imgLoad() {
 				// this.$refs.scroll.refresh()
 				// 这是混入(mixin.js)里面的refresh
@@ -208,7 +219,22 @@
 				product.iid = this.iid
 
 				// 2.将商品添加到购物车
-				this.$store.dispatch('addCart', product)
+				// 不能按照下面注释的方法来添加store，因为这样Vuex中的mutations监测不到cartList的改变，这是官方也不建议这么修改cartList的值的
+				// this.$store.cartList.push(product)
+				// this.$store.commit('addCart', product)
+				// this.$store.dispatch('addCart', product).then(res => {
+				// 	console.log(res);
+				// })
+				this.addCart(product).then(res => {
+					// this.toastMessage = res
+					// this.toastShow = true
+
+					// setTimeout(() => {
+					// 	this.toastShow = false
+					// 	this.toastMessage = ''
+					// }, 1500);
+					this.$toast.show(res, 2000)
+				})
 			}
 		},
 	}

@@ -9,7 +9,7 @@
     <div class="total-content">
       合计：{{totalPrice}}
     </div>
-    <div class="calculate">
+    <div class="calculate" @click='calcClick'>
       去计算({{checkLength}})
     </div>
   </div>
@@ -37,7 +37,7 @@
         return this.cartList.filter(item => item.checked).length
       },
       isSelectAll() {
-        if(this.cartList.length === 0) return false
+        if (this.cartList.length === 0) return false
         // 方法一
         // return this.cartList.filter(item => item.checked).length === this.cartList.length
         // 方法二
@@ -67,6 +67,13 @@
           this.cartList.forEach(item => item.checked = false);
         } else {
           this.cartList.forEach(item => item.checked = true);
+        }
+      },
+      calcClick() {
+        if (!this.isSelectAll) {
+          this.$toast.show('请选择购买的商品', 2000)
+        } else {
+          this.$toast.show('正在跳转至结算页...', 2000)
         }
       }
     },
