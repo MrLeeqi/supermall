@@ -4,7 +4,8 @@ import router from './router'
 import store from './store'
 
 import mitt from 'mitt'
-import FastClick from 'fastclick';
+import FastClick from 'fastclick'
+import lazyPlugin from 'vue3-lazy'
 
 import toast from 'components/common/toast'
 
@@ -20,5 +21,10 @@ app.use(toast)
 
 // 解决移动端300ms延迟
 FastClick.attach(document.body)
+
+// 使用图片懒加载的插件
+app.use(lazyPlugin, {
+  loading: require('./assets/img/common/placeholder.png')
+})
 
 app.mount('#app')

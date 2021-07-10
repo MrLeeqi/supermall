@@ -70,10 +70,10 @@
         }
       },
       calcClick() {
-        if (!this.isSelectAll) {
-          this.$toast.show('请选择购买的商品', 2000)
-        } else {
+        if (this.cartList.find(item => item.checked)) {
           this.$toast.show('正在跳转至结算页...', 2000)
+        } else {
+          this.$toast.show('请选择购买的商品', 2000)
         }
       }
     },
